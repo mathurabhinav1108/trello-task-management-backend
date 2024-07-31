@@ -19,6 +19,10 @@ app.use(express.json({ limit: "10mb" }));
 const path = require('path');
 
 app.use("/user", require("./routes/userRoutes"));
+
+app.use("/task", require("./routes/taskRoutes"));
+
+
 const PORT = process.env.REACT_APP_SERVER_DOMIN;
 app.get("/", (req, res) => {
   res.json({
