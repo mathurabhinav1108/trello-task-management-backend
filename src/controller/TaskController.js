@@ -21,12 +21,13 @@ exports.addtask = catchAsync(async (req, res, next) => {
       return next(new AppError("Invalid token!", 401));
     }
   
-    const { title, status, priority, deadline, description } = req.body;
+    const { title, status, priority, deadline, description, type } = req.body;
     const taskUUID = uuidv4(); // Generate a UUID for the task
   
     const record = new Tasks({
       userId,
       uuid: taskUUID, // Add the UUID to the task
+      type,
       title,
       status,
       priority,
@@ -75,6 +76,7 @@ exports.gettask = catchAsync(async (req, res, next) => {
         return res.status(404).json({
           status: false,
           message: "No tasks found for this user.",
+          tasks:[]
         });
       }
   
