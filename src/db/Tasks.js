@@ -7,9 +7,6 @@ const Taskschema = mongoose.Schema({
   uuid: {
     type: String,
   },
-  type: {
-    type: String,
-  },
   title: {
     type: String,
   },

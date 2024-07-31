@@ -21,13 +21,12 @@ exports.addtask = catchAsync(async (req, res, next) => {
       return next(new AppError("Invalid token!", 401));
     }
   
-    const { title, status, priority, deadline, description, type } = req.body;
+    const { title, status, priority, deadline, description } = req.body;
     const taskUUID = uuidv4(); // Generate a UUID for the task
   
     const record = new Tasks({
       userId,
       uuid: taskUUID, // Add the UUID to the task
-      type,
       title,
       status,
       priority,
@@ -127,4 +126,42 @@ exports.gettask = catchAsync(async (req, res, next) => {
     } catch (err) {
       return next(new AppError("Failed to delete task!", 500));
     }
+  });
+
+  exports.movetask = catchAsync(async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next(new AppError("Authorization header is missing or invalid!", 401));
+    }
+  
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      req.user = decoded; // Optional: Attach decoded user info to request object
+    } catch (err) {
+      return next(new AppError("Invalid token!", 401));
+    }
+  
+    const { uuid, type } = req.body;
+    if (!uuid) {
+      return next(new AppError("UUID is required to update a task!", 400));
+    }
+  
+    // Find the task by uuid and update its type
+    const task = await Tasks.findOne({ uuid });
+    if (!task) {
+      return next(new AppError("Task not found!", 404));
+    }
+  
+    task.type = type; // Update the type field with the new type
+  
+    await task.save(); // Save the updated task back to the database
+  
+    res.status(200).json({
+      status: 'success',
+      message: 'Task updated successfully!',
+      data: {
+        task,
+      },
+    });
   });
