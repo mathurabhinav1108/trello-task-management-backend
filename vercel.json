@@ -1,0 +1,10 @@
+{
+    "version": 1,
+    "name": "Trello Task MAnagement Backend",
+    "builds": [
+       { "src": "./isrc/ndex.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+       { "src": "/(.*)", "dest": "/" }
+    ]
+ }
