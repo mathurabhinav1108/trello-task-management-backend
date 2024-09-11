@@ -20,6 +20,7 @@ exports.addtask = catchAsync(async (req, res, next) => {
     } catch (err) {
       return next(new AppError("Invalid token!", 401));
     }
+    console.log("req.body",req.body)
   
     const { title, status, priority, deadline, description } = req.body;
     const taskUUID = uuidv4(); // Generate a UUID for the task
@@ -35,6 +36,7 @@ exports.addtask = catchAsync(async (req, res, next) => {
     });
   
     const result = await record.save();
+    console.log("result",result);
     if (result) {
       res.json({
         status: true,
@@ -65,6 +67,7 @@ exports.gettask = catchAsync(async (req, res, next) => {
     } catch (err) {
       return next(new AppError("Invalid token!", 401));
     }
+    console.log("userId",userId);
   
     try {
       // Fetch tasks associated with the userId
@@ -141,7 +144,7 @@ exports.gettask = catchAsync(async (req, res, next) => {
     } catch (err) {
       return next(new AppError("Invalid token!", 401));
     }
-  
+  console.log("req.body",req.body);
     const { uuid, type } = req.body;
     if (!uuid) {
       return next(new AppError("UUID is required to update a task!", 400));
@@ -153,7 +156,7 @@ exports.gettask = catchAsync(async (req, res, next) => {
       return next(new AppError("Task not found!", 404));
     }
   
-    task.type = type; // Update the type field with the new type
+    task.status = type; // Update the type field with the new type
   
     await task.save(); // Save the updated task back to the database
   
